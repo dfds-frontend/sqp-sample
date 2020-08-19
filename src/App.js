@@ -4,7 +4,7 @@ import qs from 'qs';
 const { createHash } = require("crypto"); //this is a node module not npm
 
 
-// Helper methods
+// Helper methods - any of this can be changed to fit the app
 const generateRandomString = (length) =>{
   let text = "";
   const whitelist = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
@@ -28,6 +28,8 @@ const base64UrlEncode = (base64) => {
     .replace(/\//g, "_");
 }
 
+
+//WARNING: won't work in legacy browsers
 const getUrlParam = (param) =>{
   return new URLSearchParams(window.location.search).get(param);
 }
