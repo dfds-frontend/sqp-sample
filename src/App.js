@@ -68,14 +68,18 @@ const redirect_uri = 'https://localhost:3000' // whitelisted redirect uri
 
 //pkce code challange - Change this to fit your needs
 const code_verifier = localStorage.getItem('codeVerifier') ? localStorage.getItem('codeVerifier') : generateRandomString(43)
-localStorage.setItem("codeVerifier", code_verifier)
-const challange = generateChallenge(code_verifier)
+const nonce = localStorage.getItem('nonce') ? localStorage.getItem('nonce') : generateRandomString(48)
 
+localStorage.setItem("codeVerifier", code_verifier)
+localStorage.setItem("nonce", nonce)
+
+const challange = generateChallenge(code_verifier)
 function App() {
   if(getUrlParam('code')){
     exchangeCode(getUrlParam('code'))
       .then( res =>{
         localStorage.removeItem('codeVerifier') // remove code verifier since it's already been used. new one should be created
+        localStorage.removeItem('nonce') // remove nonce since it's already been used. new one should be created
         window.history.replaceState(null, null, window.location.pathname); // clean up the url
       })
       .catch( err => {
@@ -85,6 +89,7 @@ function App() {
 const url = `${oktaDomain}/oauth2/default/v1/authorize?
 &response_type=code
 &scope=openid
+&nonce=${nonce}
 &redirect_uri=${redirect_uri}
 &state=state-${challange}
 &code_challenge_method=S256
